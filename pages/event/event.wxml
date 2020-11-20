@@ -1,0 +1,194 @@
+<!--pages/event/event.wxml-->
+
+  <!--
+    1. 轮播图外层容器 swiper
+    2. 每一个轮播项 swiper-item
+    3. swiper标签 存在默认样式
+      - width 100%; height:150px; image也存在默认的宽度和高度320*240;
+      - swiper 高度 无法实现由内容撑开;
+    4. 先找出来 原图的宽度和高度 等比例 给swiper定宽度和高度；
+      - 原图的宽度和高度：1125*352px
+        swiper宽度/swiper高度 = 原图的宽/原图的高
+        swiper高度 = swiper宽度*原图的高/原图的宽
+        height:100vw*352/1125
+    5. autoplay 自动轮播
+    6. interval 轮播时间
+    7. circular 循环轮播
+    8. indicator-dots 显示 指示器 分页器 索引器
+    9. indicator-color 指示器的未选中的颜色
+    10. indicator-active-color 选中指示器的颜色
+-->
+<swiper autoplay interval="1000" circular indicator-dots indicator-color="#f0fff1" indicator-active-color="#07c160">
+  <swiper-item>
+    <image src="https://gw.alicdn.com/imgextra/i3/181/O1CN01I1QKWA1DCwK5JYshg_!!181-0-lubanu.jpg" mode="widthFix" lazy-load />  
+  </swiper-item> 
+  <swiper-item>
+    <image src="https://gw.alicdn.com/imgextra/i4/70/O1CN01eEdK4w1CO6MZraT3p_!!70-0-lubanu.jpg" mode="widthFix" lazy-load />  
+  </swiper-item> 
+  <swiper-item>
+    <image src="https://gw.alicdn.com/imgextra/i3/200/O1CN01MKQiCw1DLdqmFq2YP_!!200-0-lubanu.jpg" mode="widthFix" lazy-load />  
+  </swiper-item> 
+</swiper>
+ <!--
+  rich-text 富文本标签
+  1. nodes属性来实现
+    - 接收标签字符串
+    - 接收对象数组
+-->
+  
+  <rich-text nodes="{{html}}"></rich-text>
+  <rich-text nodes="{{htmlObj}}"></rich-text>
+  
+<!--
+  导航组件 navigator
+  1. 块级元素 默认会换行 可以直接加宽度和高度
+  2. url 要跳转的页面路径 绝对路径或相对路径,必须同时设置hover-class属性才能实现跳转
+  3. open-type 跳转的方式
+    - navigate 默认值 保留当前的页面，跳转到应用内的某个页面，但是不能跳转到tabbar页面
+    - redirect 关闭当前页面，跳转到应用内的某个页面。但是不允许跳转到 tabbar 页面。
+    - switchTab 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
+    - reLaunch 关闭所有页面，打开到应用内的某个页面
+    - 。。。
+  4. target 要跳转到当前的小程序，还是其他的小程序页面;
+    - self 默认值 自己
+    - miniProgram 其它小程序
+-->
+ <navigator url="/pages/demo/demo" hover-class="navigator-hover">demo页面==》自定义组件</navigator>
+ <navigator url="/pages/basicLabel/basicLabel" hover-class="none" open-type="switchTab">基础内容</navigator>
+
+<view>
+  <view class="formBox">
+    <button type="warn" size="mini" plain bindtap="handletap" data-operation="{{-1}}">-</button>
+  <!-- 
+    1. 需要给input标签绑定 input 事件
+        绑定关键字 bindinput
+    2. 如何获取 输入框的值
+        通过事件源对象来获取
+        e.detail.value
+      3.把输入框的值 赋值到data当中
+        不能直接如下方式赋值
+          - this.data.num = e.detail.value
+          - this.num = e.detail.value
+        正确写法
+          this.setData({
+              num:e.detail.value
+          })
+      4.需要加入一个点击事件
+        - bingtap
+        - 无法在小程序当中的事件中，直接传参
+        - 通过自定义属性的方式来传递参数
+  -->
+    <input type="text" bindinput="handleInput" />
+    <button size="mini" type="primary" bindtap="handletap" data-operation="{{1}}">+</button>
+  </view>
+<!--
+  radio 单选框
+  1. radio 标签必须要和父元素radio-group来使用
+  2. value 选中的单选框的值
+  3. 需要给radio-group绑定change事件
+  3. 需要在页面中显示选中的值
+-->
+  <radio-group bindchange="handleChange">
+    <radio value="male" color="#fad123">男</radio>
+    <radio value="female">女</radio>
+  </radio-group>
+
+  <view>
+    <checkbox-group bindchange="handleItemChange">
+      <checkbox wx:for="{{fruits}}" wx:key="index" value="{{item.value}}">
+        {{item.name}}
+      </checkbox>
+    </checkbox-group>
+  </view>
+  
+</view>
+<view class="result">
+  <view>input的值: {{num}}</view>
+  <view>radio的值: {{gender}}</view>
+  <view>checkbox的值: {{checkedList}}</view>
+</view>
+
+<!--
+  button 标签
+   1. 外观的属性
+     - size 控制按钮的大小
+       ~ default 默认大小
+       ~ mini 小尺寸
+     - type 用来控制按钮的颜色
+       ~ default 灰色
+       ~ primary 绿色
+       ~ warn 红色
+     - plain 按钮是否镂空，背景色透明
+   2. 开发能力
+     - contact 直接打开 客服对话功能 需要在微信小程序的后台配置
+     - share 转发当前的小程序 到微信朋友中【不能把小程序分享到朋友圈】
+     - getPhoneNumber 获取当前用户的手机号码信息
+      ~ 绑定一个事件 bindgetphonenumber
+      ~ 在事件的回调函数中 通过参数来获取信息
+      ~ 获取到的信息 已经加密过了
+        需要用户自己搭建小程序的后台服务器,在后台服务器中进行解析 手机号码
+
+     - getUserInfo 获取当前用户的个人信息
+       ~ 使用方法 类似 获取用户的手机号码
+       ~ 可以直接获取 不存在加密的字段
+
+     - launchApp 在微信小程序中直接打开App
+       ~ 需要现在 app中 通过app的某个链接打开 小程序
+       ~ 在小程序中再通过这个功能 重新打开app
+       ~ 在小程序中再通过这个功能 重新打开app
+
+     - openSetting 打开微信小程序内置的授权页面
+       ~ 授权页面中 只会出现 用户曾经点击过的 权限
+
+     - feedback 打开微信小程序内置的意见反馈页面
+       ~ 只能够通过真机调试来打开
+
+-->
+<button type="primary" loading="true">Loading 按钮</button>
+
+<button open-type="contact">contact</button>
+<button open-type="share">share</button>
+<button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">getPhoneNumber</button>
+<button open-type="getUserInfo" bindgetuserinfo="getUserInfo">getUserInfo</button>
+<button open-type="launchApp">launchApp</button>
+<button open-type="openSetting">openSetting</button>
+<button open-type="feedback">feedback</button>
+
+<!--
+  小程序中的字体图标
+  1. type 图标的类型
+    - success|success_no_circle|info|warn|waiting|cancel|download|search|clear
+  2. size 大小
+  3. color 图标的颜色
+-->
+<icon type="success" size="30" color=""></icon>
+
+
+  
+<!--
+  1. 长按文字复制 (selectable已弃用，用user-select代替)
+  2. 对文本内容进行编码(不编码的情况下会原样输出)
+-->
+<text user-select decode>复制文本内容,对内容进行编码，避免原样输出&nbsp;123&lt;</text>
+
+<!--
+  image 图片标签
+    1. src 指定要加载的图片的路径
+       图片存在默认的宽度和高度 320*240 原图大小是329*332
+    2. mode 决定图片内容如何和图片标签宽高做适配
+      - scaleToFill 默认值	缩放模式，不保持纵横比缩放图片，使图片的宽高完全拉伸至填满 image 元素
+      - aspectFit	保持宽高比缩放图片，使图片的长边能完全显示出来。适用场景：页面轮播图 常用;
+      - aspectFill	保持宽高比缩放图片，只保证图片的短边能完全显示出来。少用
+      - widthFix	宽度不变，高度自动变化，保持原图宽高比不变； 常用
+      - 。。。	类似于以前的background-position
+    3. 小程序中的图片是直接就支持懒加载的；lazy-load
+      - 图片懒加载，在即将进入一定范围（上下三屏）时才开始加载；
+-->
+<image class="image" src="https://ftp.bmp.ovh/imgs/2020/11/eccedde059258186.png" mode="aspectFit" lazy-load />
+
+
+
+    
+  
+
+  
